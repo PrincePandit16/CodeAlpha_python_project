@@ -1,0 +1,44 @@
+import string
+import random
+
+class URLShortener:
+    def __init__(self):
+        self.short_to_long = {}
+        self.long_to_short = {}
+        self.characters = string.ascii_letters + string.digits
+        self.base_url = "https://short.url/"  # Replace with your base URL
+
+    def generate_short_url(self):
+        # Generate a random 6-character short URL
+        short_url = ''.join(random.choices(self.characters, k=6))
+        return short_url
+
+    def shorten_url(self, long_url):
+        if long_url in self.long_to_short:
+            return self.base_url + self.long_to_short[long_url]
+
+        short_url = self.generate_short_url()
+        self.short_to_long[short_url] = long_url
+        self.long_to_short[long_url] = short_url
+        return self.base_url + short_url
+
+    def expand_url(self, short_url):
+        short_key = short_url.split("/")[-1]
+        if short_key in self.short_to_long:
+            return self.short_to_long[short_key]
+        else:
+            return None
+
+# Example usage:
+if __name__ == "__main__":
+    shortener = URLShortener()
+
+    # Shorten a URL
+    long_url = "https://example.com/very/long/url/that/we/want/to/shorten"
+    shortened_url = shortener.shorten_url(long_url)
+    print(f"Shortened URL: {shortened_url}")
+
+    # Expand a shortened URL
+    original_url = shortener.expand_url(shortened_url)
+    print(f"Original URL: {original_url}")
+
