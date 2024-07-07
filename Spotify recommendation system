@@ -1,0 +1,51 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+# Mock dataset (example)
+data = {
+    'user_id': [1, 2, 3, 4, 5],
+    'song_id': [101, 102, 103, 104, 105],
+    'song_popularity': [0.8, 0.6, 0.9, 0.7, 0.5],
+    'genre': ['Pop', 'Rock', 'Pop', 'Hip-hop', 'Electronic'],
+    'repeated_within_month': [1, 0, 1, 1, 0]
+}
+
+df = pd.DataFrame(data)
+
+# Convert categorical variables into numerical using one-hot encoding
+df = pd.get_dummies(df, columns=['genre'])
+
+# Split data into training and testing sets
+X = df.drop(['user_id', 'song_id', 'repeated_within_month'], axis=1)
+y = df['repeated_within_month']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train a logistic regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate model accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy of the logistic regression model: {accuracy:.2f}")
+
+# Example of predicting for a new song for a user
+new_song = {
+    'song_popularity': 0.65,
+    'genre_Pop': 1,
+    'genre_Rock': 0,
+    'genre_Hip-hop': 0,
+    'genre_Electronic': 0
+}
+
+# Convert new_song into DataFrame for prediction
+new_song_df = pd.DataFrame([new_song])
+
+# Predict whether the user will repeat listening to the new song
+prediction = model.predict(new_song_df)
+print(f"Predicted likelihood of repeated listens (1=yes, 0=no): {prediction[0]}")
